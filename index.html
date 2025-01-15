@@ -50,13 +50,13 @@
 
 
         function checkDeploymentEnvironment() {
+            alert("checkDeploymentEnvironment");
     if (window.location.hostname.includes('vercel.app')) {
         let message = "Important: This application requires:\n" +
                      "1. Internet Explorer 11 or Edge in IE mode\n" +
                      "2. ActiveX controls enabled\n" +
                      "3. The fingerprint scanner driver installed\n" +
                      "Please configure your browser settings accordingly.";
-        alert(window.location.hostname + "\n" + message);
     }
 }
 
