@@ -1,0 +1,80 @@
+#main
+{
+	width:1180px;
+	height:620px;
+	*height:730px !important;
+	*height:730px;
+	margin:0px auto;
+}
+
+#usbocxhead
+{
+	background-color:#114D8B;
+	width:100%;
+	height:28px;
+	line-height:28px;
+	float:left;
+	color: #FFFFFF;
+	font-size:smaller;
+	text-align:center;
+}
+#usbocxfoot
+{
+	background-color:#114D8B;
+	width:100%;
+	height:20px;
+	float:left;
+	color: #FFFFFF;
+	font-size:smaller;
+	text-align:center;
+}
+#usbocxcontent
+{
+	background-color:#D4D0C8;
+	width:calc(100% - 20px);
+	height:inherit;
+	padding:10px;
+}
+.contentTop{
+	width: 100%;
+	height:calc(100% - 200px);
+	display: flex;
+	flex-direction: row;
+}
+.contentTopLeft{
+	width:256px;
+	padding-top:10px;
+	height:calc(100% - 10px);
+}
+.contentTopLeft img{max-width: 260px;}
+
+.flrx-row1{
+	margin-left:5px;
+	flex:1;
+	height:100%;
+}
+.borderWrap{
+	border: 1px solid #888;
+	border-radius: 2px;
+	width:calc(100% - 20px);
+	position: relative;
+	padding:10px;
+	text-align: center;	
+}
+.borderWrap .wrapTitle{
+	width: 125px;line-height: 14px;font-size:12px;color:#777;text-align: center;background:#D4D0C8;position: absolute;top:-7px;left:10px;
+}
+.borderWrap input
+{
+	margin-top:10px;
+	*margin-top:10px !important;
+	*margin-top:10px;
+
+}
+.contentBottom{
+	width: 100%;
+	height:180px;
+	display: flex;
+	flex-direction: row;
+	margin-top:10px;
+}

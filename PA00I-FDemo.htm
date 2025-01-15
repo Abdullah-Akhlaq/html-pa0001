@@ -1,0 +1,1096 @@
+<html>
+
+<head>
+    <TITLE>FingerPrint SDK Sample</TITLE>
+    <META NAME="Generator" CONTENT="EditPlus">
+    <META NAME="Author" CONTENT="">
+    <META NAME="Keywords" CONTENT="">
+    <META NAME="Description" CONTENT="">
+    <link rel="stylesheet" rev="stylesheet" type="text/css" href="main.css" />
+    <script type="text/javascript" src="usbocx.js"></script>
+
+    <script language="javascript" type="text/javascript">
+        var port_no = 0;
+        var Tz = 0;
+        var Mb = 0;
+
+
+        // Ensure Base64 to Blob conversion function
+        function _Base64ToBlob(base64) {
+            try {
+                if (!base64) {
+                    return null;
+                }
+
+                // Remove whitespace from base64 string
+                base64 = base64.replace(/\s/g, '');
+
+                var binary = atob(base64);
+                var bytes = new Uint8Array(binary.length);
+                for (var i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
+
+                return new Blob([bytes], { type: 'application/octet-stream' });
+            } catch (error) {
+                console.log("Base64 to Blob conversion error:", error);
+                return null;
+            }
+        }
+
+        function Disablebutton() {
+            document.getElementById("btnDetectFinger").disabled = true;
+            document.getElementById("btnCAPTURE").disabled = true;
+            document.getElementById("btnGetCompressData").disabled = true;
+            document.getElementById("btn_Enroll").disabled = true;
+            document.getElementById("btn_Verify").disabled = true;
+            document.getElementById("btn_Search").disabled = true;
+            document.getElementById("btn_Remove").disabled = true;
+            document.getElementById("btn_Clear").disabled = true;
+            document.getElementById("btn_GetDB").disabled = true;
+            document.getElementById("btnGetDevInfo").disabled = true;
+            document.getElementById("btnGetVersion").disabled = true;
+            document.getElementById("btn_Decompression").disabled = true;
+            document.getElementById("btn_MatchAB").disabled = true;
+            document.getElementById("btn_TempA").disabled = true;
+            document.getElementById("btn_TempB").disabled = true;
+            return 0;
+        }
+
+        function Enablebutton() {
+            document.getElementById("btnDetectFinger").disabled = false;
+            document.getElementById("btnCAPTURE").disabled = false;
+            document.getElementById("btnGetCompressData").disabled = false;
+            document.getElementById("btn_Enroll").disabled = false;
+            document.getElementById("btn_Verify").disabled = false;
+            document.getElementById("btn_Search").disabled = false;
+            document.getElementById("btn_Remove").disabled = false;
+            document.getElementById("btn_Clear").disabled = false;
+            document.getElementById("btn_GetDB").disabled = false;
+            document.getElementById("btnGetDevInfo").disabled = false;
+            document.getElementById("btnGetVersion").disabled = false;
+            document.getElementById("btn_TempA").disabled = false;
+            document.getElementById("btn_TempB").disabled = false;
+            return 0;
+        }
+
+        function DisableSpecial() {
+            document.getElementById("btnGetMb").disabled = true;
+            document.getElementById("btnGetMinutiae").disabled = true;
+        }
+
+        function Button_GetSDKInfor() {
+            Disablebutton();
+            document.getElementById("img_compress").value = "";
+            mxGetSDKInfor(port_no, function (result, data, driversion) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "Algorithm Version=" + data + ",Finger Live Version=" + driversion;
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = data;
+                }
+            });
+            Enablebutton();
+        }
+
+        function Button_DevInfo() {
+            Disablebutton();
+            document.getElementById("img_compress").value = "";
+            mxGetDevInfo(port_no, function (result, data, devsn) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "DevVersion=" + data + ", DevSN=" + devsn;
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = data;
+                }
+            });
+            Enablebutton();
+        }
+
+        function Button_DetectFinger() {
+            Disablebutton();
+            document.getElementById("img_compress").value = "";
+            document.getElementById("fp_showMessage").value = "Please press your finger ...";
+            mxDetect_finger(port_no, function (result, data) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "Has Finger";
+                } else if (result == 1) {
+                    document.getElementById("fp_showMessage").value = "No Finger";
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = "Open Device Failed.";
+                }
+            });
+            Enablebutton();
+        }
+
+        function Button_GetMinutiae() {
+            document.getElementById("img_compress").value = "";
+            Disablebutton();
+            mxGetMinutiae(port_no, function (result, data, ntime) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "MINUTAE Success, Duration " + ntime + " ms";
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = "ErrorCode=" + result + " " + data;
+                }
+            });
+            Enablebutton();
+        }
+
+        function Button_GetImage() {
+            var ledVal = 1;
+            var chk = document.getElementById("chkLed").checked;
+            if (chk) {
+                ledVal = 3;
+            } else {
+                ledVal = 0;
+            }
+            var nfiqvalue = document.getElementById("slectNFIQ").value;
+            var ntimeout = document.getElementById("txtTimeOut").value;
+            if (!isNaN(ntimeout)) {
+                if (ntimeout < 0) {
+                    document.getElementById("fp_showMessage").value = "The TimeOut Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "TimeOut Input illegal";
+                return;
+            }
+            var imgcompress = document.getElementById("selectID").value;
+            var imagebuffer;
+            document.getElementById("image").src = "fingerbg.jpg";
+            document.getElementById("fp_showMessage").value = "Please press your finger to get image...";
+            document.getElementById("img_compress").value = "";
+            Disablebutton();
+            DisableSpecial();
+            mxGetImg(port_no, ledVal, imgcompress, nfiqvalue, ntimeout, function (result, data, liveresult, ntime, nfiscore, pscore, imgpress, compresslen) {
+                //alert(liveresult);
+                //alert(result);
+                if (nfiqvalue == 0) {
+                    nfiscore = "NoCheck";
+                }
+                if (result == 0 && ledVal == 0) {
+                    document.getElementById("fp_showMessage").value = "Get Image Success!" + "Duration " + ntime + " ms" + " NIFQ Score=" + nfiscore + " Image Quality Score=" + pscore;
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+                    //document.getElementById("img_compress").value = imgpress;
+                    document.getElementById("img_compress").value = "data:image/bmp;base64," + data;
+                    imagebuffer = data;
+                    document.getElementById("hidPressLen").value = compresslen;  //hidPressLen
+                    Enablebutton();
+                    document.getElementById("btnGetMb").disabled = false;
+                    document.getElementById("btnGetMinutiae").disabled = false;
+                }
+                else if (result == 0 && ledVal == 3) {
+                    if (liveresult == 0) {
+                        var retInfo = "Get Image Failed: fake finger ";  //0 fake finger
+                        document.getElementById("fp_showMessage").value = retInfo;
+                        imagebuffer = 0;
+                        Enablebutton();
+                        document.getElementById("btnGetMb").disabled = true;
+                        document.getElementById("btnGetMinutiae").disabled = true;
+                    }
+                    else {                                               //1 live finger
+                        document.getElementById("fp_showMessage").value = "Get Image Success!" + "Duration " + ntime + " ms" + " NIFQ Score=" + nfiscore + " Image Quality Score=" + pscore;
+                        document.getElementById("image").src = "data:image/bmp;base64," + data;
+                        //document.getElementById("img_compress").value = imgpress;
+                        document.getElementById("img_compress").value = "data:image/bmp;base64," + data;
+                        imagebuffer = data;
+                        document.getElementById("hidPressLen").value = compresslen;  //hidPressLen
+                        Enablebutton();
+                        document.getElementById("btnGetMb").disabled = false;
+                        document.getElementById("btnGetMinutiae").disabled = false;
+                    }
+                }
+                else if (result == -105 && ledVal == 3) {
+                    if (liveresult == 0) {
+                        var retInfo = "Get Image Failed: fake finger ";  //0 fake finger
+                        document.getElementById("fp_showMessage").value = retInfo;
+                        imagebuffer = 0;
+                        Enablebutton();
+                        document.getElementById("btnGetMb").disabled = true;
+                        document.getElementById("btnGetMinutiae").disabled = true;
+                    }
+                    else {                                               //1 live finger
+                        document.getElementById("fp_showMessage").value = "Get Image Success!" + "Duration " + ntime + " ms" + " NIFQ Score=" + nfiscore + " Image Quality Score=" + pscore;
+                        document.getElementById("image").src = "data:image/bmp;base64," + data;
+                        //document.getElementById("img_compress").value = imgpress;
+                        document.getElementById("img_compress").value = "data:image/bmp;base64," + data;
+                        imagebuffer = data;
+                        document.getElementById("hidPressLen").value = compresslen;  //hidPressLen
+                        Enablebutton();
+                        document.getElementById("btnGetMb").disabled = false;
+                        document.getElementById("btnGetMinutiae").disabled = false;
+                    }
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                    document.getElementById("btnGetMb").disabled = true;
+                    document.getElementById("btnGetMinutiae").disabled = true;
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = data + "��ErrCode=" + result;
+                    imagebuffer = 0;
+                    Enablebutton();
+                    document.getElementById("btnGetMb").disabled = true;
+                    document.getElementById("btnGetMinutiae").disabled = true;
+                }
+            });
+        }
+
+        function Button_GetImageData() {
+            var ledVal = 1;
+            var chk = document.getElementById("chkLed").checked;
+            if (chk) {
+                ledVal = 3;
+            } else {
+                ledVal = 0;
+            }
+            var nfiqvalue = document.getElementById("slectNFIQ").value;
+            var ntimeout = document.getElementById("txtTimeOut").value;
+            if (!isNaN(ntimeout)) {
+                if (ntimeout < 0) {
+                    document.getElementById("fp_showMessage").value = "The TimeOut Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "TimeOut Input illegal";
+                return;
+            }
+            var imgcompress = document.getElementById("selectID").value;
+            var imagebuffer;
+            document.getElementById("image").src = "fingerbg.jpg";
+            document.getElementById("fp_showMessage").value = "Please press your finger to get image...";
+            document.getElementById("img_compress").value = "";
+            Disablebutton();
+            DisableSpecial();
+            mxGetImg(port_no, ledVal, imgcompress, nfiqvalue, ntimeout, function (result, data, liveresult, ntime, nfiscore, pscore, imgpress, compresslen) {
+                //alert(liveresult);
+                //alert(result);
+                if (nfiqvalue == 0) {
+                    nfiscore = "NoCheck";
+                }
+                if (result == 0 && ledVal == 0) {
+                    document.getElementById("fp_showMessage").value = "GetImage Data Success!" + "Duration " + ntime + " ms" + " NIFQ Score=" + nfiscore + " Image Quality Score=" + pscore;
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+                    document.getElementById("img_compress").value = imgpress;
+                    //document.getElementById("img_compress").value = "data:image/bmp;base64," + data;
+                    imagebuffer = data;
+                    document.getElementById("hidPressLen").value = compresslen;  //hidPressLen
+                    Enablebutton();
+                    //document.getElementById("btnGetMb").disabled = false;
+                    //document.getElementById("btnGetMinutiae").disabled = false;  
+                    SaveImageCompressData(imgcompress, imgpress);
+                    document.getElementById("btn_Decompression").disabled = false;
+
+                }
+                else if (result == 0 && ledVal == 3) {
+                    if (liveresult == 0) {
+                        var retInfo = "GetImage Data Failed: fake finger ";  //0 fake finger
+                        document.getElementById("fp_showMessage").value = retInfo;
+                        imagebuffer = 0;
+                        Enablebutton();
+                        document.getElementById("btnGetMb").disabled = true;
+                        document.getElementById("btnGetMinutiae").disabled = true;
+                    }
+                    else {                                               //1 live finger
+                        document.getElementById("fp_showMessage").value = "GetImage Data Success!" + "Duration " + ntime + " ms" + " NIFQ Score=" + nfiscore + " Image Quality Score=" + pscore;
+                        document.getElementById("image").src = "data:image/bmp;base64," + data;
+                        document.getElementById("img_compress").value = imgpress;
+                        //document.getElementById("img_compress").value = "data:image/bmp;base64," + data;
+                        imagebuffer = data;
+                        document.getElementById("hidPressLen").value = compresslen;  //hidPressLen
+                        Enablebutton();
+                        //document.getElementById("btnGetMb").disabled = false;
+                        //document.getElementById("btnGetMinutiae").disabled = false;
+                        SaveImageCompressData(imgcompress, imgpress);
+                        document.getElementById("btn_Decompression").disabled = false;
+                    }
+                }
+                else if (result == -105 && ledVal == 3) {
+                    if (liveresult == 0) {
+                        var retInfo = "GetImage Data Failed: fake finger ";  //0 fake finger
+                        document.getElementById("fp_showMessage").value = retInfo;
+                        imagebuffer = 0;
+                        Enablebutton();
+                        document.getElementById("btnGetMb").disabled = true;
+                        document.getElementById("btnGetMinutiae").disabled = true;
+                    }
+                    else {                                               //1 live finger
+                        document.getElementById("fp_showMessage").value = "GetImage Data Success!" + "Duration " + ntime + " ms" + " NIFQ Score=" + nfiscore + " Image Quality Score=" + pscore;
+                        document.getElementById("image").src = "data:image/bmp;base64," + data;
+                        document.getElementById("img_compress").value = imgpress;
+                        //document.getElementById("img_compress").value = "data:image/bmp;base64," + data;
+                        imagebuffer = data;
+                        document.getElementById("hidPressLen").value = compresslen;  //hidPressLen
+                        Enablebutton();
+                        //document.getElementById("btnGetMb").disabled = false;
+                        //document.getElementById("btnGetMinutiae").disabled = false;
+                        SaveImageCompressData(imgcompress, imgpress);
+                        document.getElementById("btn_Decompression").disabled = false;
+                    }
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                    document.getElementById("btnGetMb").disabled = true;
+                    document.getElementById("btnGetMinutiae").disabled = true;
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = data + "��ErrCode=" + result;
+                    imagebuffer = 0;
+                    Enablebutton();
+                    document.getElementById("btnGetMb").disabled = true;
+                    document.getElementById("btnGetMinutiae").disabled = true;
+                }
+            });
+        }
+        //Export compressed data
+        function SaveImageCompressData(imgType, imgpressData) {
+            let sufix = "dat";
+            switch (imgType) {
+                case "4":
+                    sufix = "jp2";
+                    break;
+                case "2":
+                    sufix = "wsq";
+                    break;
+                default:
+                    break;
+            }
+            let fileName = "imagedata." + sufix;
+            _saveAs(_Base64ToBlob(imgpressData), fileName);
+        }
+
+        function Button_Enroll() {
+            var ledVal = 1;
+            var chk = document.getElementById("chkLed").checked;
+            if (chk) {
+                ledVal = 3;
+            } else {
+                ledVal = 0;
+            }
+            var nfiqvalue = document.getElementById("slectNFIQ").value;
+            var ntimeout = document.getElementById("txtTimeOut").value;
+            if (!isNaN(ntimeout)) {
+                if (ntimeout < 0) {
+                    document.getElementById("fp_showMessage").value = "The TimeOut Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "TimeOut Input illegal";
+                return;
+            }
+            //
+            var nuserid = document.getElementById("txt_UserId").value;
+            if (!isNaN(nuserid)) {
+                if (nuserid.length > 8) {
+                    document.getElementById("fp_showMessage").value = "The User ID length must not exceed 8 bits";
+                    return;
+                }
+                if (nuserid < 0) {
+                    document.getElementById("fp_showMessage").value = "The User ID Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "The User ID Input illegal";
+                return;
+            }
+            document.getElementById("img_compress").value = "";
+            var algmod = document.getElementById("selectAlg").value;
+            document.getElementById("image").src = "fingerbg.jpg";
+            document.getElementById("fp_showMessage").value = "Please press your finger...";
+            DisableSpecial();
+            Disablebutton();
+            mxGetTz(port_no, ledVal, algmod, nfiqvalue, ntimeout, nuserid, function (result, data, ntime, fingermb, message) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "ENROLL Success!" + "Duration " + ntime + " ms";
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+                    document.getElementById("img_compress").value = fingermb;
+                    Enablebutton();
+                }
+                else if (result == -105 && ledVal == 3) {
+                    var retInfo = "fake finger ";
+                    document.getElementById("fp_showMessage").value = retInfo;
+                    imagebuffer = 0;
+                    Enablebutton();
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = message + ", ErrCode=" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+
+        function Button_GetMb() {
+            var ledVal = 1;
+            var chk = document.getElementById("chkLed").checked;
+            if (chk) {
+                ledVal = 3;
+            } else {
+                ledVal = 0;
+            }
+            document.getElementById("img_compress").value = "";
+            var algmod = document.getElementById("selectAlg").value;
+
+            Disablebutton();
+            mxGetMb(port_no, algmod, ledVal, function (result, fingermb) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "Get Template Success.";
+                    document.getElementById("img_compress").value = fingermb;
+                    Enablebutton();
+                    let sufix = "unknow";
+                    switch (algmod) {
+                        case "2":
+                            sufix = "ANSI_V2004";
+                            break;
+                        case "3":
+                            sufix = "ANSI_V2009";
+                            break;
+                        case "4":
+                            sufix = "ISO_V2005";
+                            break;
+                        case "5":
+                            sufix = "ISO_V2011";
+                            break;
+                        default:
+                            break;
+                    }
+                    let fileName = "Feature_" + sufix + ".dat";
+                    _saveAs(_Base64ToBlob(fingermb), fileName);
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = "Get MB Failed:" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+        function Button_Capture_And_GetTemplate() {
+            Disablebutton();
+
+
+            // First, capture the fingerprint image
+            var ledVal = 1;
+            var nfiqvalue = document.getElementById("slectNFIQ").value;
+            var ntimeout = document.getElementById("txtTimeOut").value;
+            var algmod = document.getElementById("selectAlg").value;
+            var imgcompress = document.getElementById("selectID").value;
+            document.getElementById("image").src = "fingerbg.jpg";
+            document.getElementById("fp_showMessage").value = "Capturing fingerprint and generating template...";
+            document.getElementById("img_compress").value = "";
+
+
+            mxGetImg(port_no, ledVal, imgcompress, nfiqvalue, ntimeout, function (result, data, liveresult, ntime, nfiscore, pscore, imgpress, compresslen) {
+                if (result == 0) { // 0 means success
+				alert("Capture finger print success");
+                    document.getElementById("fp_showMessage").value = "Capture success! Generating template...";
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+
+                    // Now, retrieve the template
+                    console.log("any", imgpress);
+                    alert("capture finger print success");
+                    mxGetMb(port_no, imgcompress, ledVal, function (result, fingermb) {
+                         // IE Generating template twice which causing duplication that's why this condition is written
+                         if (fingermb === "Fingerprint drive is not installed or not started") {
+                                        return
+                                    } 
+               alert("Get template success");
+                        if (fingermb && typeof fingermb === 'string') {
+                            // Determine file suffix
+                            let sufix = "unknown";
+                            switch (algmod) {
+                                case "2":
+                                    sufix = "ANSI_V2004";
+                                    break;
+                                case "3":
+                                    sufix = "ANSI_V2009";
+                                    break;
+                                case "4":
+                                    sufix = "ISO_V2005";
+                                    break;
+                                case "5":
+                                    sufix = "ISO_V2011";
+                                    break;
+                            }
+
+                            var fileName = "Feature_" + sufix + ".dat";
+                            var downloadSuccess = false;
+
+                            // IE-Specific Direct Download
+                            if (window.navigator && window.navigator.msSaveBlob) {
+                                try {
+                                    console.log("port_no", port_no);
+
+                                   
+                                    let blob = _Base64ToBlob(fingermb);
+                                    console.log(blob);
+
+                                    if (blob) {
+                                        window.navigator.msSaveBlob(blob, fileName);
+                                        downloadSuccess = true;
+
+                                        document.getElementById("fp_showMessage").value = sufix + " Template generated and downloaded successfully.";
+
+                                    }
+                                } catch (ieError) {
+                                    console.log("IE download error:", ieError);
+                                    downloadSuccess = false;
+                                }
+                            }
+                            // Fallback for modern browsers
+                            else {
+                                try {
+                                    let blob = _Base64ToBlob(fingermb);
+                                    var link = document.createElement('a');
+                                    link.href = window.URL.createObjectURL(blob);
+                                    link.download = fileName;
+                                    link.style.display = 'none';
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    window.URL.revokeObjectURL(link.href);
+                                    downloadSuccess = true;
+
+                                    document.getElementById("fp_showMessage").value = sufix + " Template generated successfully.";
+                                } catch (error) {
+                                    console.log("Modern browser download error:", error);
+                                    downloadSuccess = false;
+                                }
+                            }
+
+                            document.getElementById("img_compress").value = fingermb;
+
+                            // Only show error if download actually failed
+                            if (!downloadSuccess) {
+                                document.getElementById("fp_showMessage").value = "Template download failed. Please try again.";
+                            }
+                        }
+                        else if (result != 0) {
+                            document.getElementById("fp_showMessage").value = "Template generation failed: " + result;
+                        }
+                        Enablebutton();
+                    });
+                } else {
+                    document.getElementById("fp_showMessage").value = "Capture failed: " + result;
+                    Enablebutton();
+                }
+            });
+        }
+
+
+        function Button_Verify() {
+            var ledVal = 1;
+            var chk = document.getElementById("chkLed").checked;
+            if (chk) {
+                ledVal = 3;
+            } else {
+                ledVal = 0;
+            }
+            var nfiqvalue = document.getElementById("slectNFIQ").value;
+            var ntimeout = document.getElementById("txtTimeOut").value;
+            if (!isNaN(ntimeout)) {
+                if (ntimeout < 0) {
+                    document.getElementById("fp_showMessage").value = "The TimeOut Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "TimeOut Input illegal";
+                return;
+            }
+            //
+            var nuserid = document.getElementById("txt_UserId").value;
+            if (!isNaN(nuserid)) {
+                if (nuserid.length > 8) {
+                    document.getElementById("fp_showMessage").value = "The User ID length must not exceed 8 bits";
+                    return;
+                }
+                if (nuserid < 0) {
+                    document.getElementById("fp_showMessage").value = "The User ID Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "The User ID Input illegal";
+                return;
+            }
+            document.getElementById("img_compress").value = "";
+            var algmod = document.getElementById("selectAlg").value;
+            document.getElementById("image").src = "fingerbg.jpg";
+            document.getElementById("fp_showMessage").value = "Please press your finger...";
+            DisableSpecial();
+            Disablebutton();
+            mxFingerMatch(port_no, ledVal, algmod, nfiqvalue, ntimeout, nuserid, function (result, data, ntime, fingermb, message) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "VERIFY Success!" + " Duration " + ntime + " ms";
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+                    document.getElementById("img_compress").value = fingermb;
+                    Enablebutton();
+                }
+                else if (result == -105 && ledVal == 3) {
+                    var retInfo = "fake finger ";
+                    document.getElementById("fp_showMessage").value = retInfo;
+                    imagebuffer = 0;
+                    Enablebutton();
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = message + " ErrCode=" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+
+        function Button_Search() {
+            var ledVal = 1;
+            var chk = document.getElementById("chkLed").checked;
+            if (chk) {
+                ledVal = 3;
+            } else {
+                ledVal = 0;
+            }
+            var nfiqvalue = document.getElementById("slectNFIQ").value;
+            var ntimeout = document.getElementById("txtTimeOut").value;
+            if (!isNaN(ntimeout)) {
+                if (ntimeout < 0) {
+                    document.getElementById("fp_showMessage").value = "The TimeOut Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "TimeOut Input illegal";
+                return;
+            }
+            //
+            var nuserid = 0;
+            document.getElementById("img_compress").value = "";
+            var algmod = document.getElementById("selectAlg").value;
+            document.getElementById("image").src = "fingerbg.jpg";
+            document.getElementById("fp_showMessage").value = "Please press your finger...";
+            DisableSpecial();
+            Disablebutton();
+            mxFingerSearch(port_no, ledVal, algmod, nfiqvalue, ntimeout, nuserid, function (result, data, ntime, fingermb, userid) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "SEARCH Success!" + " User ID=" + userid + ",Duration " + ntime + " ms";
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+                    document.getElementById("img_compress").value = fingermb;
+                    Enablebutton();
+                }
+                else if (result == -105 && ledVal == 3) {
+                    var retInfo = "fake finger ";
+                    document.getElementById("fp_showMessage").value = retInfo;
+                    imagebuffer = 0;
+                    Enablebutton();
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = userid + ", ErrCode=" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+
+        function Button_UserRemove() {
+            var nuserid = document.getElementById("txt_UserId").value;
+            if (!isNaN(nuserid)) {
+                if (nuserid.length > 8) {
+                    document.getElementById("fp_showMessage").value = "The User ID length must not exceed 8 bits";
+                    return;
+                }
+                if (nuserid < 0) {
+                    document.getElementById("fp_showMessage").value = "The User ID Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "The User ID Input illegal";
+                return;
+            }
+            document.getElementById("img_compress").value = "";
+            document.getElementById("image").src = "fingerbg.jpg";
+            DisableSpecial();
+            Disablebutton();
+            mxRemoveUser(port_no, nuserid, function (result, data) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = data + " ErrCode=" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+
+        function Button_Clear() {
+            document.getElementById("fp_showMessage").value = "";
+            document.getElementById("img_compress").value = "";
+            document.getElementById("image").src = "fingerbg.jpg";
+            DisableSpecial();
+            Disablebutton();
+            mxClearDB(port_no, function (result, data) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = data + " ErrCode=" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+
+        function Button_GetDB() {
+            document.getElementById("fp_showMessage").value = "";
+            document.getElementById("img_compress").value = "";
+            document.getElementById("image").src = "fingerbg.jpg";
+            DisableSpecial();
+            Disablebutton();
+            mxGetDBInfo(port_no, function (result, data) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "Free DB=" + data;
+                    Enablebutton();
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = data + " ErrCode=" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+
+        function Button_Decompression() {
+            document.getElementById("fp_showMessage").value = "";
+            document.getElementById("image").src = "fingerbg.jpg";
+
+            var dataImg = document.getElementById("img_compress").value;
+            var compressType = document.getElementById("selectID").value;
+            var imgpresslen = document.getElementById("hidPressLen").value;
+            //alert(imgpresslen);
+            mxDecompressionImg(port_no, compressType, imgpresslen, dataImg, function (result, data) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "Decompression Success.";
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+                    Enablebutton();
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = "Decompression Failed," + " ErrCode=" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+
+        function Button_GetTemplateA() {
+            var ledVal = 1;
+            var chk = document.getElementById("chkLed").checked;
+            if (chk) {
+                ledVal = 3;
+            } else {
+                ledVal = 0;
+            }
+            var nfiqvalue = document.getElementById("slectNFIQ").value;
+            var ntimeout = document.getElementById("txtTimeOut").value;
+            if (!isNaN(ntimeout)) {
+                if (ntimeout < 0) {
+                    document.getElementById("fp_showMessage").value = "The TimeOut Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "TimeOut Input illegal";
+                return;
+            }
+            //
+            var nuserid = 0;
+            document.getElementById("img_compress").value = "";
+            var algmod = document.getElementById("selectAlg").value;
+            document.getElementById("image").src = "fingerbg.jpg";
+            document.getElementById("fp_showMessage").value = "Please press your finger...";
+            DisableSpecial();
+            Disablebutton();
+            mxGetTemplateTest(port_no, ledVal, algmod, nfiqvalue, ntimeout, nuserid, function (result, data, ntime, fingermb, message) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "Create Template A Success!" + "Duration " + ntime + " ms";
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+                    Mb = fingermb;
+                    if (Mb != 0 && Tz != 0) {
+                        document.getElementById("btn_MatchAB").disabled = false;
+                    }
+                    Enablebutton();
+                }
+                else if (result == -105 && ledVal == 3) {
+                    var retInfo = "fake finger ";
+                    document.getElementById("fp_showMessage").value = retInfo;
+                    imagebuffer = 0;
+                    Enablebutton();
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = message + ", ErrCode=" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+
+        function Button_GetTemplateB() {
+            var ledVal = 1;
+            var chk = document.getElementById("chkLed").checked;
+            if (chk) {
+                ledVal = 3;
+            } else {
+                ledVal = 0;
+            }
+            var nfiqvalue = document.getElementById("slectNFIQ").value;
+            var ntimeout = document.getElementById("txtTimeOut").value;
+            if (!isNaN(ntimeout)) {
+                if (ntimeout < 0) {
+                    document.getElementById("fp_showMessage").value = "The TimeOut Can't be negative";
+                    return;
+                }
+            }
+            else {
+                document.getElementById("fp_showMessage").value = "TimeOut Input illegal";
+                return;
+            }
+            //
+            var nuserid = 0;
+            document.getElementById("img_compress").value = "";
+            var algmod = document.getElementById("selectAlg").value;
+            document.getElementById("image").src = "fingerbg.jpg";
+            document.getElementById("fp_showMessage").value = "Please press your finger...";
+            DisableSpecial();
+            Disablebutton();
+            mxGetTemplateTest(port_no, ledVal, algmod, nfiqvalue, ntimeout, nuserid, function (result, data, ntime, fingermb, message) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = "Create Template B Success!" + "Duration " + ntime + " ms";
+                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+                    Tz = fingermb;
+                    if (Mb != 0 && Tz != 0) {
+                        document.getElementById("btn_MatchAB").disabled = false;
+                    }
+                    Enablebutton();
+                }
+                else if (result == -105 && ledVal == 3) {
+                    var retInfo = "fake finger ";
+                    document.getElementById("fp_showMessage").value = retInfo;
+                    imagebuffer = 0;
+                    Enablebutton();
+                }
+                else if (result == -100) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = message + ", ErrCode=" + result;
+                    Enablebutton();
+                    return;
+                }
+            });
+        }
+
+        function Button_TwoTemplateMatch() {
+            DisableSpecial();
+            Disablebutton();
+            document.getElementById("image").src = "fingerbg.jpg";
+            document.getElementById("img_compress").value = "";
+            var algmod = document.getElementById("selectAlg").value;
+            if (Tz == 0) {
+                document.getElementById("fp_showMessage").value = "";
+                alert("Please Create Template B  first");
+                Enablebutton();
+                return;
+            }
+
+            if (Mb == 0) {
+                document.getElementById("fp_showMessage").value = "";
+                alert("Please Create Template A  first");
+                Enablebutton();
+                return;
+            }
+
+            mxTwoTemplateMatch(algmod, Mb, Tz, function (result, data) {
+                if (result == 0) {
+                    document.getElementById("fp_showMessage").value = data;
+                    Enablebutton();
+                }
+                else {
+                    document.getElementById("fp_showMessage").value = data + ",Errcode=" + result;
+                    Enablebutton();
+                }
+                //Tz = 0;
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div id="main">
+        <div id="usbocxhead">
+            PA00I Websocket Demo V1.0.0.2.20230811
+        </div>
+        <div id="usbocxcontent">
+            <div class="contentTop">
+                <div class="contentTopLeft">
+                    <img id="image" class="img" src="fingerbg.jpg" />
+                </div>
+                <div class="flrx-row1">
+                    <div class="borderWrap" style="margin-top: 15px;height:85px;text-align: left;font-size:12px;">
+                        <div class="wrapTitle">Parameter</div>
+                        <!-- Multiple choice -->
+                        <input type="checkbox" name="" id="chkLed" value="3"> LFD &nbsp;&nbsp;&nbsp;&nbsp;
+                        <!-- drop-down -->
+                        NFIQ:&nbsp;<select id="slectNFIQ" style="margin-top:10px;">
+                            <option value="1">1(best)</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5(worst)</option>
+                        </select>&nbsp;&nbsp;&nbsp;&nbsp;</br>
+                        TimeOut(ms): <input type="text" value="5000" style="width:55px;height:25px;" id="txtTimeOut"
+                            maxlength="4" /></br>
+                    </div>
+                    <div class="borderWrap" style="margin-top: 15px;height:110px;">
+                        <div class="wrapTitle">Export</div>
+                        Image Compress��<select id="selectID" style="width:120px;height:20px;text-align:right;">
+                            <option value="2">WSQ</option>
+                            <option value="4">JPEG2000</option>
+                        </select><input type="button" value="Get Image Compress Data" style="width:170px;height:20px;"
+                            id="btnGetCompressData" onclick="Button_GetImageData()" /><br />
+                        <div class="wrapTitle">Fingerprint Functions</div>
+                        <input type="button" value="DETECTFINGER" style="width:120px;height:20px;" id="btnDetectFinger"
+                            onclick="Button_DetectFinger()" />
+                        <input type="button" value="CAPTURE" style="width:120px;height:20px;" id="btnCAPTURE"
+                            onclick="Button_GetImage()" />
+                        <input type="button" value="MINUTAE" style="width:120px;height:20px;" id="btnGetMinutiae"
+                            disabled="false" onclick="return Button_GetMinutiae()" />
+                    </div>
+
+                    <div class="borderWrap" style="margin-top: 15px;height:30px;">
+                        <div class="wrapTitle">Info.</div>
+                        <input type="button" value="DEVICE INFO" style="width:120px;height:20px;" id="btnGetDevInfo"
+                            onclick="return Button_DevInfo()" />
+                        <input type="button" value="SDK INFO" style="width:120px;height:20px;text-align:right;"
+                            id="btnGetVersion" onclick="return Button_GetSDKInfor()" />
+                    </div>
+                </div>
+                <div class="flrx-row1">
+                    <div class="borderWrap" style="margin-top: 15px;height:90px;">
+                        <div class="wrapTitle">Template Option</div>
+                        Template Type:<select id="selectAlg" style="width:140px;height:20px;text-align:left;">
+                            <option value="4">ISO-19794-2:2005</option>
+                            <option value="5">ISO-19794-2:2011</option>
+                            <option value="2">ANSI 378-2004</option>
+                            <option value="3">ANSI 378-2009</option>
+                        </select>&nbsp;&nbsp;
+                        <input type="button" value="Get Template" style="width:120px;height:20px;text-align:right;"
+                            id="btnGetMb" disabled="false" onclick="return Button_GetMb()" /><br />
+                        <input type="button" value="Capture & Get Template" style="width:200px;height:25px;"
+                            id="btnCaptureANSI" onclick="Button_Capture_And_GetTemplate()" /> <br />
+
+                        <input type="button" value="Create Template A" style="width:160px;height:25px;" id="btn_TempA"
+                            onclick="Button_GetTemplateA()" />
+                        <input type="button" value="Create Template B" style="width:160px;height:25px;" id="btn_TempB"
+                            onclick="Button_GetTemplateB()" />
+                        <input type="button" value="Compare Template A&B" style="width:160px;height:25px;" disabled
+                            id="btn_MatchAB" onclick="Button_TwoTemplateMatch()" />
+                    </div>
+                    <div class="borderWrap" style="margin-top: 15px;height:135px;">
+                        <div class="wrapTitle">On Host</div>
+                        Input User ID:<input type="text" value="0" style="width:110px;height:20px;" id="txt_UserId"
+                            maxlength="8" /><br>
+                        <input type="button" value="ENROLL" style="width:80px;height:25px;" id="btn_Enroll"
+                            onclick="Button_Enroll()" />
+                        <input type="button" value="VERIFY" style="width:80px;height:25px;" id="btn_Verify"
+                            onclick="Button_Verify()" />
+                        <input type="button" value="SEARCH" style="width:80px;height:25px;" id="btn_Search"
+                            onclick="Button_Search()" />
+                        <input type="button" value="REMOVE" style="width:80px;height:25px;" id="btn_Remove"
+                            onclick="Button_UserRemove()" />
+                        <input type="button" value="DB INFO" style="width:80px;height:25px;" id="btn_GetDB"
+                            onclick="Button_GetDB()" />
+                        <input type="button" value="CLEAR" style="width:80px;height:25px;" id="btn_Clear"
+                            onclick="Button_Clear()" /><br />
+                        <label>Memory database capacity 1000</label>
+                    </div>
+                    <div class="borderWrap" style="margin-top: 15px;height:110px;border:0px;">
+                        <br />
+                        <br />
+                        <input type="hidden" id="hidPressLen" name="field��name" value="0">
+                        <br />
+                        <br />
+                        <input type="button" value="Decompression" style="width:120px;height:25px;float: right;"
+                            disabled id="btn_Decompression" onclick="Button_Decompression()" />
+                    </div>
+                    <div id="imgcmpr" class="borderWrap" style="margin-top: 15px;height:160px;">
+                        <div class="wrapTitle">Data</div>
+                        <textarea id="img_compress" style="width:570px;height:170px;margin-left:1px;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="contentBottom">
+                <textarea id="fp_showMessage"
+                    style="width:560px;height:180px;max-height:180px;max-width:560px;"></textarea>
+            </div>
+
+        </div>
+        <div id="usbocxfoot">
+        </div>
+    </div>
+</body>
+
+</html>
