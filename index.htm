@@ -8,7 +8,7 @@
     <META NAME="Description" CONTENT="">
     <link rel="stylesheet" rev="stylesheet" type="text/css" href="main.css" />
     <script type="text/javascript" src="usbocx.js"></script>
-  
+
     <script language="javascript" type="text/javascript">
         var port_no = 0;
         var Tz = 0;
@@ -489,8 +489,11 @@
                 }
             });
         }
+        // Define a flag at the appropriate scope to track mxGetMb execution
         function Button_Capture_And_GetTemplate() {
             Disablebutton();
+            var isMxGetMbInProgress = false;
+
 
 
             // First, capture the fingerprint image
@@ -503,97 +506,107 @@
             document.getElementById("fp_showMessage").value = "Capturing fingerprint and generating template...";
             document.getElementById("img_compress").value = "";
 
+            console.log("step 1");
+            
 
             mxGetImg(port_no, ledVal, imgcompress, nfiqvalue, ntimeout, function (result, data, liveresult, ntime, nfiscore, pscore, imgpress, compresslen) {
                 if (result == 0) { // 0 means success
-				alert("Capture finger print success");
+                    // alert("Capture finger print success");
                     document.getElementById("fp_showMessage").value = "Capture success! Generating template...";
                     document.getElementById("image").src = "data:image/bmp;base64," + data;
 
                     // Now, retrieve the template
-                    console.log("any", imgpress);
-                    alert("capture finger print success");
+                    // console.log("any", imgpress);1
+                    // alert("capture finger print success");
+                    // Ensure mxGetMb is not called multiple times
+                    console.log("step 2",result);
+                    
                     mxGetMb(port_no, imgcompress, ledVal, function (result, fingermb) {
-                         // IE Generating template twice which causing duplication that's why this condition is written
-                         if (fingermb === "Fingerprint drive is not installed or not started") {
-                                        return
-                                    } 
-               alert("Get template success");
-                        if (fingermb && typeof fingermb === 'string') {
-                            // Determine file suffix
-                            let sufix = "unknown";
-                            switch (algmod) {
-                                case "2":
-                                    sufix = "ANSI_V2004";
-                                    break;
-                                case "3":
-                                    sufix = "ANSI_V2009";
-                                    break;
-                                case "4":
-                                    sufix = "ISO_V2005";
-                                    break;
-                                case "5":
-                                    sufix = "ISO_V2011";
-                                    break;
-                            }
+                        if (!isMxGetMbInProgress) {
+                            isMxGetMbInProgress = true;
+                            console.log("step 3",result);
+                            
+                            // alert("Get template success");
+                            if (fingermb && typeof fingermb === 'string') {
+                                // Determine file suffix
+                                let sufix = "unknown";
+                                switch (algmod) {
+                                    case "2":
+                                        sufix = "ANSI_V2004";
+                                        break;
+                                    case "3":
+                                        sufix = "ANSI_V2009";
+                                        break;
+                                    case "4":
+                                        sufix = "ISO_V2005";
+                                        break;
+                                    case "5":
+                                        sufix = "ISO_V2011";
+                                        break;
+                                }
 
-                            var fileName = "Feature_" + sufix + ".dat";
-                            var downloadSuccess = false;
+                                var fileName = "Feature_" + sufix + ".dat";
+                                var downloadSuccess = false;
 
-                            // IE-Specific Direct Download
-                            if (window.navigator && window.navigator.msSaveBlob) {
-                                try {
-                                    console.log("port_no", port_no);
+                                // IE-Specific Direct Download
+                                if (window.navigator && window.navigator.msSaveBlob) {
+                                    try {
 
-                                   
-                                    let blob = _Base64ToBlob(fingermb);
-                                    console.log(blob);
 
-                                    if (blob) {
-                                        window.navigator.msSaveBlob(blob, fileName);
+                            
+                                        let blob = _Base64ToBlob(fingermb);
+
+
+                                        if (blob) {
+                                            window.navigator.msSaveBlob(blob, fileName);
+                                            downloadSuccess = true;
+
+                                            document.getElementById("fp_showMessage").value = sufix + " Template generated and downloaded successfully.";
+
+                                        }
+                                    } catch (ieError) {
+                                        console.log("IE download error:", ieError);
+                                        downloadSuccess = false;
+                                    }
+                                }
+                                // Fallback for modern browsers
+                                else {
+                                    try {
+                                        let blob = _Base64ToBlob(fingermb);
+                                        var link = document.createElement('a');
+                                        link.href = window.URL.createObjectURL(blob);
+                                        link.download = fileName;
+                                        link.style.display = 'none';
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                        window.URL.revokeObjectURL(link.href);
                                         downloadSuccess = true;
 
-                                        document.getElementById("fp_showMessage").value = sufix + " Template generated and downloaded successfully.";
-
+                                        document.getElementById("fp_showMessage").value = sufix + " Template generated successfully.";
+                                    } catch (error) {
+                                        console.log("Modern browser download error:", error);
+                                        downloadSuccess = false;
                                     }
-                                } catch (ieError) {
-                                    console.log("IE download error:", ieError);
-                                    downloadSuccess = false;
+                                }
+
+                                document.getElementById("img_compress").value = fingermb;
+
+                                // Only show error if download actually failed
+                                if (!downloadSuccess) {
+                                    document.getElementById("fp_showMessage").value = "Template download failed. Please try again.";
                                 }
                             }
-                            // Fallback for modern browsers
-                            else {
-                                try {
-                                    let blob = _Base64ToBlob(fingermb);
-                                    var link = document.createElement('a');
-                                    link.href = window.URL.createObjectURL(blob);
-                                    link.download = fileName;
-                                    link.style.display = 'none';
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-                                    window.URL.revokeObjectURL(link.href);
-                                    downloadSuccess = true;
-
-                                    document.getElementById("fp_showMessage").value = sufix + " Template generated successfully.";
-                                } catch (error) {
-                                    console.log("Modern browser download error:", error);
-                                    downloadSuccess = false;
-                                }
+                            else if (result != 0) {
+                                document.getElementById("fp_showMessage").value = "Template generation failed: " + result;
                             }
+                            Enablebutton();
 
-                            document.getElementById("img_compress").value = fingermb;
-
-                            // Only show error if download actually failed
-                            if (!downloadSuccess) {
-                                document.getElementById("fp_showMessage").value = "Template download failed. Please try again.";
-                            }
                         }
-                        else if (result != 0) {
-                            document.getElementById("fp_showMessage").value = "Template generation failed: " + result;
-                        }
-                        Enablebutton();
                     });
+
+
+
                 } else {
                     document.getElementById("fp_showMessage").value = "Capture failed: " + result;
                     Enablebutton();
