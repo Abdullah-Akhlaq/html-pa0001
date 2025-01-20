@@ -275,71 +275,91 @@ function mxGetTemplateTest(
   };
 }
 
+// Modified mxGetImg function
+function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
+    var ws = createWebSocket('finger');
+    if (!ws) {
+        call_back_fun(-100, "WebSocket connection failed - Browser not supported or connection error");
+        return;
+    }
+
+    ws.onopen = function (evt) {
+        var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
+        try {
+            ws.send(command);
+        } catch (e) {
+            call_back_fun(-100, "Error sending command");
+            ws.close();
+        }
+    };
+
+    ws.onmessage = function (evt) {
+        try {
+            var resp = JSON.parse(evt.data);
+            call_back_fun(
+                resp.result,
+                resp.data,
+                resp.liveresult,
+                resp.ntime,
+                resp.nfiscore,
+                resp.pscore,
+                resp.imgpress,
+                resp.compresslen
+            );
+        } catch (e) {
+            call_back_fun(-100, "Error parsing response");
+        } finally {
+            ws.close();
+        }
+    };
+
+    ws.onclose = function (evt) {
+        // Optional: Handle close event
+    };
+
+    ws.onerror = function (evt) {
+        call_back_fun(-100, "Fingerprint drive is not installed or not started");
+    };
+}
+
+// Modified mxGetMb function
 function mxGetMb(port, algmod, ckled, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger");
-  ws.onopen = function (evt) {
-    var command = "Mx_GetMbTemplate|" + port + "|" + ckled + "|" + algmod;
-    ws.send(command);
-  };
+    var ws = createWebSocket('finger');
+    if (!ws) {
+        call_back_fun(-100, "WebSocket connection failed - Browser not supported or connection error");
+        return;
+    }
 
-  ws.onmessage = function (evt) {
-    ws.close();
-    var resp = eval("(" + evt.data + ")");
-    call_back_fun(resp.result, resp.fingermb);
-    //var curPath = getCurrentDirectory();
-  };
+    ws.onopen = function (evt) {
+        var command = "Mx_GetMbTemplate|" + port + "|" + ckled + "|" + algmod;
+        try {
+            ws.send(command);
+        } catch (e) {
+            call_back_fun(-100, "Error sending command");
+            ws.close();
+        }
+    };
 
-  ws.onclose = function (evt) {};
-  ws.onerror = function (evt) {
-    call_back_fun(-100, "Fingerprint drive is not installed or not started");
-  };
+    ws.onmessage = function (evt) {
+        try {
+            var resp = JSON.parse(evt.data);
+            call_back_fun(resp.result, resp.fingermb);
+        } catch (e) {
+            call_back_fun(-100, "Error parsing response");
+        } finally {
+            ws.close();
+        }
+    };
+
+    ws.onclose = function (evt) {
+        // Optional: Handle close event
+    };
+
+    ws.onerror = function (evt) {
+        call_back_fun(-100, "Fingerprint drive is not installed or not started");
+    };
 }
 
-function mxGetImg(
-  port,
-  ckled,
-  imgcompress,
-  nfiqvalue,
-  ntimeout,
-  call_back_fun
-) {
-  var ws = new WebSocket("ws://localhost:7501/finger");
-  ws.onopen = function (evt) {
-    var command =
-      "Mx_GetImage|" +
-      port +
-      "|" +
-      ckled +
-      "|" +
-      imgcompress +
-      "|" +
-      nfiqvalue +
-      "|" +
-      ntimeout;
-    ws.send(command);
-  };
-
-  ws.onmessage = function (evt) {
-    ws.close();
-    var resp = eval("(" + evt.data + ")");
-    call_back_fun(
-      resp.result,
-      resp.data,
-      resp.liveresult,
-      resp.ntime,
-      resp.nfiscore,
-      resp.pscore,
-      resp.imgpress,
-      resp.compresslen
-    );
-    var curPath = getCurrentDirectory();
-  };
-
-  ws.onclose = function (evt) {};
-  ws.onerror = function (evt) {
-    call_back_fun(-100, "Fingerprint drive is not installed or not started");
-  };
-}
 
 function mxGetMinutiae(port, call_back_fun) {
   var ws = new WebSocket("ws://localhost:7501/finger");

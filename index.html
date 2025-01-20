@@ -503,131 +503,121 @@
                 }
             });
         }
-        // Define a flag at the appropriate scope to track mxGetMb execution
+      
         function Button_Capture_And_GetTemplate() {
-            Disablebutton();
-            var isMxGetMbInProgress = false;
+    Disablebutton();
+    var isMxGetMbInProgress = false;
 
+    // Get UI values
+    var ledVal = 1;
+    var nfiqvalue = document.getElementById("slectNFIQ").value;
+    var ntimeout = document.getElementById("txtTimeOut").value;
+    var algmod = document.getElementById("selectAlg").value;
+    var imgcompress = document.getElementById("selectID").value;
 
+    // Reset UI elements
+    document.getElementById("image").src = "fingerbg.jpg";
+    document.getElementById("fp_showMessage").value = "Capturing fingerprint and generating template...";
+    document.getElementById("img_compress").value = "";
 
-            // First, capture the fingerprint image
-            var ledVal = 1;
-            var nfiqvalue = document.getElementById("slectNFIQ").value;
-            var ntimeout = document.getElementById("txtTimeOut").value;
-            var algmod = document.getElementById("selectAlg").value;
-            var imgcompress = document.getElementById("selectID").value;
-            document.getElementById("image").src = "fingerbg.jpg";
-            document.getElementById("fp_showMessage").value = "Capturing fingerprint and generating template...";
-            document.getElementById("img_compress").value = "";
+    console.log("step 1");
 
-            console.log("step 1");
-            
+    // Use modified mxGetImg
+    mxGetImg(
+        port_no, 
+        ledVal, 
+        imgcompress, 
+        nfiqvalue, 
+        ntimeout, 
+        function(result, data, liveresult, ntime, nfiscore, pscore, imgpress, compresslen) {
+            if (result === -100) {
+                // WebSocket connection error
+                document.getElementById("fp_showMessage").value = data; // Error message
+                Enablebutton();
+                return;
+            }
 
-            mxGetImg(port_no, ledVal, imgcompress, nfiqvalue, ntimeout, function (result, data, liveresult, ntime, nfiscore, pscore, imgpress, compresslen) {
-                if (result == 0) { // 0 means success
-                    // alert("Capture finger print success");
-                    document.getElementById("fp_showMessage").value = "Capture success! Generating template...";
-                    document.getElementById("image").src = "data:image/bmp;base64," + data;
+            if (result === 0) {
+                document.getElementById("fp_showMessage").value = "Capture success! Generating template...";
+                document.getElementById("image").src = "data:image/bmp;base64," + data;
+                console.log("step 2", result);
 
-                    // Now, retrieve the template
-                    // console.log("any", imgpress);1
-                    // alert("capture finger print success");
-                    // Ensure mxGetMb is not called multiple times
-                    console.log("step 2",result);
+                // Use modified mxGetMb
+                if (!isMxGetMbInProgress) {
+                    isMxGetMbInProgress = true;
                     
-                    mxGetMb(port_no, imgcompress, ledVal, function (result, fingermb) {
-                        if (!isMxGetMbInProgress) {
-                            isMxGetMbInProgress = true;
-                            console.log("step 3",result);
-                            
-                            // alert("Get template success");
-                            if (fingermb && typeof fingermb === 'string') {
-                                // Determine file suffix
-                                let sufix = "unknown";
-                                switch (algmod) {
-                                    case "2":
-                                        sufix = "ANSI_V2004";
-                                        break;
-                                    case "3":
-                                        sufix = "ANSI_V2009";
-                                        break;
-                                    case "4":
-                                        sufix = "ISO_V2005";
-                                        break;
-                                    case "5":
-                                        sufix = "ISO_V2011";
-                                        break;
-                                }
+                    mxGetMb(port_no, imgcompress, ledVal, function(result, fingermb) {
+                        if (result === -100) {
+                            // WebSocket connection error
+                            document.getElementById("fp_showMessage").value = fingermb; // Error message
+                            Enablebutton();
+                            return;
+                        }
 
-                                var fileName = "Feature_" + sufix + ".dat";
-                                var downloadSuccess = false;
+                        console.log("step 3", result);
 
-                                // IE-Specific Direct Download
+                        if (result === 0 && fingermb && typeof fingermb === 'string') {
+                            // Determine file suffix
+                            let sufix = "unknown";
+                            switch (algmod) {
+                                case "2": sufix = "ANSI_V2004"; break;
+                                case "3": sufix = "ANSI_V2009"; break;
+                                case "4": sufix = "ISO_V2005"; break;
+                                case "5": sufix = "ISO_V2011"; break;
+                            }
+
+                            var fileName = "Feature_" + sufix + ".dat";
+                            var downloadSuccess = false;
+
+                            try {
+                                let blob = _Base64ToBlob(fingermb);
+                                
+                                // IE-specific download
                                 if (window.navigator && window.navigator.msSaveBlob) {
-                                    try {
-
-
-                            
-                                        let blob = _Base64ToBlob(fingermb);
-
-
-                                        if (blob) {
-                                            window.navigator.msSaveBlob(blob, fileName);
-                                            downloadSuccess = true;
-
-                                            document.getElementById("fp_showMessage").value = sufix + " Template generated and downloaded successfully.";
-
-                                        }
-                                    } catch (ieError) {
-                                        console.log("IE download error:", ieError);
-                                        downloadSuccess = false;
-                                    }
+                                    window.navigator.msSaveBlob(blob, fileName);
+                                    downloadSuccess = true;
                                 }
-                                // Fallback for modern browsers
+                                // Modern browsers download
                                 else {
-                                    try {
-                                        let blob = _Base64ToBlob(fingermb);
-                                        var link = document.createElement('a');
-                                        link.href = window.URL.createObjectURL(blob);
-                                        link.download = fileName;
-                                        link.style.display = 'none';
-                                        document.body.appendChild(link);
-                                        link.click();
-                                        document.body.removeChild(link);
-                                        window.URL.revokeObjectURL(link.href);
-                                        downloadSuccess = true;
-
-                                        document.getElementById("fp_showMessage").value = sufix + " Template generated successfully.";
-                                    } catch (error) {
-                                        console.log("Modern browser download error:", error);
-                                        downloadSuccess = false;
-                                    }
+                                    var link = document.createElement('a');
+                                    link.href = window.URL.createObjectURL(blob);
+                                    link.download = fileName;
+                                    link.style.display = 'none';
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    window.URL.revokeObjectURL(link.href);
+                                    downloadSuccess = true;
                                 }
 
                                 document.getElementById("img_compress").value = fingermb;
-
-                                // Only show error if download actually failed
-                                if (!downloadSuccess) {
-                                    document.getElementById("fp_showMessage").value = "Template download failed. Please try again.";
-                                }
+                                document.getElementById("fp_showMessage").value = 
+                                    downloadSuccess 
+                                        ? sufix + " Template generated and downloaded successfully."
+                                        : "Template download failed. Please try again.";
+                            } 
+                            catch (error) {
+                                console.error("Download error:", error);
+                                document.getElementById("fp_showMessage").value = 
+                                    "Error downloading template: " + error.message;
                             }
-                            else if (result != 0) {
-                                document.getElementById("fp_showMessage").value = "Template generation failed: " + result;
-                            }
-                            Enablebutton();
-
+                        } 
+                        else {
+                            document.getElementById("fp_showMessage").value = 
+                                "Template generation failed: " + result;
                         }
+                        
+                        Enablebutton();
                     });
-
-
-
-                } else {
-                    document.getElementById("fp_showMessage").value = "Capture failed: " + result;
-                    Enablebutton();
                 }
-            });
+            } 
+            else {
+                document.getElementById("fp_showMessage").value = "Capture failed: " + result;
+                Enablebutton();
+            }
         }
-
+    );
+}
 
         function Button_Verify() {
             var ledVal = 1;
