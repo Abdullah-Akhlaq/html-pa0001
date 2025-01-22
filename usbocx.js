@@ -163,6 +163,12 @@ function mxGetTemplateTest(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, c
 }
 
 function mxGetMb(port, algmod, ckled, call_back_fun){
+
+    if ("WebSocket" in window) {
+        var ws = new WebSocket("ws://localhost:7501/finger");
+        console.log(ws);
+        
+    }
     var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function(evt) {
       var command = "Mx_GetMbTemplate|" + port + "|" + ckled + "|" + algmod;
@@ -205,6 +211,8 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
 }
 
 function mxGetMinutiae(port, call_back_fun) {
+
+   
         var ws = new WebSocket("ws://localhost:7501/finger");
         ws.onopen = function (evt) {
             var command = "Mx_GetMinutiae|" + port + "|" + "";
