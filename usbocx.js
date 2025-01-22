@@ -253,7 +253,12 @@ function mxGetTemplateTest(
 
 function mxGetMb(port, algmod, ckled, call_back_fun) {
   try {
-    var ws = new WebSocket("ws://localhost:7501/finger", "ws");
+    document
+    .createElement("meta")
+    .setAttribute("http-equiv", "X-UA-Compatible");
+  document.createElement("meta").setAttribute("content", "IE=edge");
+  if (window.WebSocket) {
+    var ws = new window.WebSocket("ws://localhost:7501/finger", "ws");
     ws.onopen = function (evt) {
       var command = "Mx_GetMbTemplate|" + port + "|" + ckled + "|" + algmod;
       ws.send(command);
@@ -270,6 +275,8 @@ function mxGetMb(port, algmod, ckled, call_back_fun) {
     ws.onerror = function (evt) {
       call_back_fun(-100, "Fingerprint drive is not installed or not started");
     };
+  }
+  
   } catch (error) {
     console.log("error",error);
   }
