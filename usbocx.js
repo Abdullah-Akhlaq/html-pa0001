@@ -271,7 +271,7 @@ function mxGetMb(port, algmod, ckled, call_back_fun) {
       call_back_fun(-100, "Fingerprint drive is not installed or not started");
     };
   } catch (error) {
-    console.log(error);
+    console.log("error",error);
   }
 }
 
