@@ -190,6 +190,12 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
 }
 
 function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
+
+    if ("WebSocket" in window) {
+        var ws = new WebSocket("ws://localhost:7501/finger");
+        console.log(ws);
+        
+    }
   var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function(evt) {
       var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
