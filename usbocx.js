@@ -163,7 +163,7 @@ function mxGetTemplateTest(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, c
 }
 
 function mxGetMb(port, algmod, ckled, call_back_fun){
-    var ws = new SockJS("wss://localhost:7501/finger");
+    var ws = new SockJS("ws://localhost:7501/finger");
   ws.onopen = function(evt) {
       var command = "Mx_GetMbTemplate|" + port + "|" + ckled + "|" + algmod;
 	  ws.send(command);
@@ -184,7 +184,7 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
 }
 
 function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
-  var ws = new SockJS('wss://localhost:7501/finger');
+  var ws = new SockJS('ws://localhost:7501/finger');
   ws.onopen = function(evt) {
       var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
 	  ws.send(command);
