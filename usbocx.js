@@ -278,7 +278,7 @@ function mxGetMb(port, algmod, ckled, call_back_fun) {
   }
   
   } catch (error) {
-    console.log("error",error);
+    console.log("error1",error);
   }
 }
 
@@ -337,7 +337,7 @@ function mxGetImg(
       };
     }
   } catch (error) {
-    console.log("error",error);
+    console.log("error2",error);
   }
 }
 
