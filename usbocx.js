@@ -284,42 +284,51 @@ function mxGetImg(
   call_back_fun
 ) {
   try {
-    var ws = new WebSocket("ws://localhost:7501/finger", "ws");
-    ws.onopen = function (evt) {
-      var command =
-        "Mx_GetImage|" +
-        port +
-        "|" +
-        ckled +
-        "|" +
-        imgcompress +
-        "|" +
-        nfiqvalue +
-        "|" +
-        ntimeout;
-      ws.send(command);
-    };
+    document
+      .createElement("meta")
+      .setAttribute("http-equiv", "X-UA-Compatible");
+    document.createElement("meta").setAttribute("content", "IE=edge");
+    if (window.WebSocket) {
+      var ws = new window.WebSocket("ws://localhost:7501/finger", "ws");
+      ws.onopen = function (evt) {
+        var command =
+          "Mx_GetImage|" +
+          port +
+          "|" +
+          ckled +
+          "|" +
+          imgcompress +
+          "|" +
+          nfiqvalue +
+          "|" +
+          ntimeout;
+        ws.send(command);
+      };
 
-    ws.onmessage = function (evt) {
-      ws.close();
-      var resp = eval("(" + evt.data + ")");
-      call_back_fun(
-        resp.result,
-        resp.data,
-        resp.liveresult,
-        resp.ntime,
-        resp.nfiscore,
-        resp.pscore,
-        resp.imgpress,
-        resp.compresslen
-      );
-      var curPath = getCurrentDirectory();
-    };
+      ws.onmessage = function (evt) {
+        ws.close();
+        var resp = eval("(" + evt.data + ")");
+        call_back_fun(
+          resp.result,
+          resp.data,
+          resp.liveresult,
+          resp.ntime,
+          resp.nfiscore,
+          resp.pscore,
+          resp.imgpress,
+          resp.compresslen
+        );
+        var curPath = getCurrentDirectory();
+      };
 
-    ws.onclose = function (evt) {};
-    ws.onerror = function (evt) {
-      call_back_fun(-100, "Fingerprint drive is not installed or not started");
-    };
+      ws.onclose = function (evt) {};
+      ws.onerror = function (evt) {
+        call_back_fun(
+          -100,
+          "Fingerprint drive is not installed or not started"
+        );
+      };
+    }
   } catch (error) {
     console.log(error);
   }
