@@ -163,7 +163,7 @@ function mxGetTemplateTest(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, c
 }
 
 function mxGetMb(port, algmod, ckled, call_back_fun){
-    var ws = new SockJS("wsS://localhost:7501/finger");
+    var ws = new SockJS("wss://localhost:7501/finger");
   ws.onopen = function(evt) {
       var command = "Mx_GetMbTemplate|" + port + "|" + ckled + "|" + algmod;
 	  ws.send(command);
