@@ -205,7 +205,7 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
 }
 
 function mxGetMinutiae(port, call_back_fun) {
-        var ws = new WebSocet("ws://localhost:7501/finger");
+        var ws = new WebSocket("ws://localhost:7501/finger");
         ws.onopen = function (evt) {
             var command = "Mx_GetMinutiae|" + port + "|" + "";
             ws.send(command);
