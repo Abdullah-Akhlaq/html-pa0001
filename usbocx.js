@@ -184,57 +184,25 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
 }
 
 function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
-  
-    // When the WebSocket connection is open
-    ws.onopen = function(evt) {
-      console.log("WebSocket opened successfully");
+  var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+  ws.onopen = function(evt) {
       var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
-      console.log("Sending command:", command); // Log the command being sent
-      ws.send(command); // Send the command to the server
-    };
-  
-    // When a message is received from the WebSocket server
-    ws.onmessage = function(evt) {
-      console.log("Received data:", evt.data);  // Log the raw data received
-  
-      ws.close();  // Close the WebSocket connection after receiving the data
-  
-      try {
-        // Try to parse the response as JSON
-        var resp = JSON.parse(evt.data);
-        console.log("Parsed response:", resp);  // Log the parsed response
-  
-        // Call the callback function with the parsed response data
-        call_back_fun(resp.result, resp.data, resp.liveresult, resp.ntime, resp.nfiscore, resp.pscore, resp.imgpress, resp.compresslen);
-        var curPath = getCurrentDirectory();  // Call to get the current directory (you might want to handle it further)
-      } catch (e) {
-        // If JSON parsing fails, handle plain text response (non-JSON)
-        console.error("Error parsing response:", e);
-        
-        // If response is plain text, handle it appropriately
-        if (evt.data === "Hello from the proxy server") {
-          console.log("Received plain text response from the proxy server");
-          call_back_fun(-100, "Proxy server returned a plain text message");
-        } else {
-          call_back_fun(-100, "Failed to parse response or invalid data received");
-        }
-      }
-    };
-  
-    // When the WebSocket connection is closed
-    ws.onclose = function(evt) {
-      console.log("WebSocket connection closed.");
-    };
-  
-    // When an error occurs with the WebSocket
-    ws.onerror = function(evt) {
-      console.error("WebSocket error occurred:", evt);
-      call_back_fun(-100, "Fingerprint driver is not installed or not started");
-    };
-  }
-  
-  
+	  ws.send(command);
+	}
+
+  ws.onmessage = function(evt) {
+	  ws.close();
+	  var resp = eval('('+evt.data+')');
+	  call_back_fun(resp.result, resp.data, resp.liveresult, resp.ntime, resp.nfiscore, resp.pscore, resp.imgpress, resp.compresslen);
+    var curPath = getCurrentDirectory();
+  };
+
+  ws.onclose = function(evt) {
+  };
+  ws.onerror = function (evt) {
+      call_back_fun(-100, "Fingerprint drive is not installed or not started");
+  };
+}
 
 function mxGetMinutiae(port, call_back_fun) {
         var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
