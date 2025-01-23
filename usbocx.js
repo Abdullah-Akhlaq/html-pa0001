@@ -194,33 +194,12 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
     ws.onmessage = function(evt) {
         ws.close();
         try {
-            let data = evt.data;
-            let resp;
-
-            // Check if data is already an object
-            if (typeof data === 'object') {
-                resp = data;
-            } else {
-                resp = JSON.parse(data);
-                console.log(resp);
-                
-
-                // // If it's a string, try parsing or create a default response
-                // try {
-                //     resp = JSON.parse(data);
-                //     console.log("Parsed response:", resp);
-                    
-                // } catch {
-                //     resp = {
-                //         result: data.includes('success') ? 0 : -1,
-                //         data: data
-                //     };
-                // }
-            }
-
+            var cleanData = evt.data.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+            var resp = JSON.parse(cleanData);
+            
             call_back_fun(
                 resp.result || -1, 
-                resp.data || data, 
+                resp.data || cleanData, 
                 resp.liveresult || null, 
                 resp.ntime || 0, 
                 resp.nfiscore || 0, 
