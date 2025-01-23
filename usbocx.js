@@ -187,23 +187,35 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
     var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
   
     ws.onopen = function(evt) {
+      // Create the command string with valid characters
       var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
       ws.send(command);
     };
   
     ws.onmessage = function(evt) {
       ws.close();
-      var resp = JSON.parse(evt.data); // Use JSON.parse to properly parse the response
-      call_back_fun(resp.result, resp.data, resp.liveresult, resp.ntime, resp.nfiscore, resp.pscore, resp.imgpress, resp.compresslen);
-      var curPath = getCurrentDirectory();
+      try {
+        // Parse the incoming JSON response safely
+        var resp = JSON.parse(evt.data);
+        // Call the callback function with the parsed response
+        call_back_fun(resp.result, resp.data, resp.liveresult, resp.ntime, resp.nfiscore, resp.pscore, resp.imgpress, resp.compresslen);
+        var curPath = getCurrentDirectory();
+      } catch (e) {
+        console.error("Error parsing response:", e);
+        call_back_fun(-100, "Failed to parse response");
+      }
     };
   
-    ws.onclose = function(evt) {};
+    ws.onclose = function(evt) {
+      // You can handle the WebSocket close event here if needed
+    };
   
     ws.onerror = function(evt) {
-      call_back_fun(-100, "Fingerprint drive is not installed or not started");
+      // If there's an error, call the callback function with an error message
+      call_back_fun(-100, "Fingerprint driver is not installed or not started");
     };
   }
+  
   
 
 function mxGetMinutiae(port, call_back_fun) {
