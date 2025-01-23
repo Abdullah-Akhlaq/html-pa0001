@@ -201,7 +201,7 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
       ws.close();  // Close the WebSocket connection after receiving the data
   
       try {
-        // Attempt to parse the response as JSON
+        // Try to parse the response as JSON
         var resp = JSON.parse(evt.data);
         console.log("Parsed response:", resp);  // Log the parsed response
   
@@ -209,9 +209,16 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
         call_back_fun(resp.result, resp.data, resp.liveresult, resp.ntime, resp.nfiscore, resp.pscore, resp.imgpress, resp.compresslen);
         var curPath = getCurrentDirectory();  // Call to get the current directory (you might want to handle it further)
       } catch (e) {
-        // If JSON parsing fails, log the error and call the callback with a failure message
+        // If JSON parsing fails, handle plain text response (non-JSON)
         console.error("Error parsing response:", e);
-        call_back_fun(-100, "Failed to parse response or invalid data received");
+        
+        // If response is plain text, handle it appropriately
+        if (evt.data === "Hello from the proxy server") {
+          console.log("Received plain text response from the proxy server");
+          call_back_fun(-100, "Proxy server returned a plain text message");
+        } else {
+          call_back_fun(-100, "Failed to parse response or invalid data received");
+        }
       }
     };
   
@@ -227,7 +234,6 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
     };
   }
   
-
   
 
 function mxGetMinutiae(port, call_back_fun) {
