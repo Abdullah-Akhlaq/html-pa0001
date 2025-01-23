@@ -183,7 +183,7 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
   };
 }
 
-function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
+ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
     var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     
     ws.onopen = function(evt) {
