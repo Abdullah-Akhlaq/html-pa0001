@@ -187,41 +187,54 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
     var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     
     ws.onopen = function(evt) {
-      var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
-      ws.send(command);
+        var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
+        ws.send(command);
     };
   
     ws.onmessage = function(evt) {
-      ws.close();
-      try {
-        var cleanData = evt.data.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
-        var resp = JSON.parse(cleanData);
-        
-        call_back_fun(
-          resp.result, 
-          resp.data, 
-          resp.liveresult, 
-          resp.ntime, 
-          resp.nfiscore, 
-          resp.pscore, 
-          resp.imgpress, 
-          resp.compresslen
-        );
-        var curPath = getCurrentDirectory();
-      } catch (error) {
-        console.error("Error parsing response:", error);
-        call_back_fun(-100, "Error processing fingerprint data");
-      }
-    };
-  
-    ws.onclose = function(evt) {
-      // Optional: Add any cleanup or logging
+        ws.close();
+        try {
+            // Attempt to parse or handle raw string directly
+            let data = evt.data;
+            let resp;
+            
+            try {
+                // First try standard JSON parsing
+                resp = JSON.parse(data);
+            } catch {
+                // If parsing fails, try parsing after removing control characters
+                let cleanData = data.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+                resp = JSON.parse(cleanData);
+            }
+
+            // Fallback to direct string handling if needed
+            if (!resp) {
+                resp = {
+                    result: data.includes('success') ? 0 : -1,
+                    data: data
+                };
+            }
+
+            call_back_fun(
+                resp.result || -1, 
+                resp.data || data, 
+                resp.liveresult || null, 
+                resp.ntime || 0, 
+                resp.nfiscore || 0, 
+                resp.pscore || 0, 
+                resp.imgpress || 0, 
+                resp.compresslen || 0
+            );
+        } catch (error) {
+            console.error("Error processing response:", error);
+            call_back_fun(-100, "Unprocessable response");
+        }
     };
   
     ws.onerror = function (evt) {
-      call_back_fun(-100, "Fingerprint drive is not installed or not started");
+        call_back_fun(-100, "Fingerprint drive error");
     };
-  }
+}
 
 function mxGetMinutiae(port, call_back_fun) {
         var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
