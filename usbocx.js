@@ -193,7 +193,7 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
 	}
 
   ws.onmessage = function(evt) {
-    console.log({evt});
+    console.log(evt);
     
 	  ws.close();
 	  var resp = eval('('+evt.data+')');
