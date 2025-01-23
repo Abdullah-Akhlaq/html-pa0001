@@ -200,7 +200,7 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
             try {
                 resp = JSON.parse(data);
             } catch {
-                let cleanData = data.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+                let cleanData = JSON.parse(cleanData);
                 resp = JSON.parse(cleanData);
             }
 
