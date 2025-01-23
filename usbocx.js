@@ -184,25 +184,27 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
 }
 
 function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
-  var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
-  ws.onopen = function(evt) {
+    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+  
+    ws.onopen = function(evt) {
       var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
-	  ws.send(command);
-	}
-
-  ws.onmessage = function(evt) {
-	  ws.close();
-	  var resp = eval('('+evt.data+')');
-	  call_back_fun(resp.result, resp.data, resp.liveresult, resp.ntime, resp.nfiscore, resp.pscore, resp.imgpress, resp.compresslen);
-    var curPath = getCurrentDirectory();
-  };
-
-  ws.onclose = function(evt) {
-  };
-  ws.onerror = function (evt) {
+      ws.send(command);
+    };
+  
+    ws.onmessage = function(evt) {
+      ws.close();
+      var resp = JSON.parse(evt.data); // Use JSON.parse to properly parse the response
+      call_back_fun(resp.result, resp.data, resp.liveresult, resp.ntime, resp.nfiscore, resp.pscore, resp.imgpress, resp.compresslen);
+      var curPath = getCurrentDirectory();
+    };
+  
+    ws.onclose = function(evt) {};
+  
+    ws.onerror = function(evt) {
       call_back_fun(-100, "Fingerprint drive is not installed or not started");
-  };
-}
+    };
+  }
+  
 
 function mxGetMinutiae(port, call_back_fun) {
         var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
