@@ -186,6 +186,8 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
 function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
   var ws = new WebSocket("wss://proxy-server-production-6280.up.railway.app/finger");
 //   wss://proxy-server-production-6280.up.railway.app/finger
+console.log(ws);
+
 // proxy-server-production-6280.up.railway.app
   ws.onopen = function(evt) {
       var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
@@ -210,6 +212,7 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
 
 function mxGetMinutiae(port, call_back_fun) {
         var ws = new WebSocket("wss://proxy-server-production-6280.up.railway.app/finger");
+        
         ws.onopen = function (evt) {
             var command = "Mx_GetMinutiae|" + port + "|" + "";
             ws.send(command);
