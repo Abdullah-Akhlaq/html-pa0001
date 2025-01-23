@@ -183,7 +183,7 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
   };
 }
 
- function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
+function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
     var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     
     ws.onopen = function(evt) {
@@ -194,20 +194,16 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
     ws.onmessage = function(evt) {
         ws.close();
         try {
-            // Attempt to parse or handle raw string directly
             let data = evt.data;
             let resp;
             
             try {
-                // First try standard JSON parsing
                 resp = JSON.parse(data);
             } catch {
-                // If parsing fails, try parsing after removing control characters
                 let cleanData = data.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
                 resp = JSON.parse(cleanData);
             }
 
-            // Fallback to direct string handling if needed
             if (!resp) {
                 resp = {
                     result: data.includes('success') ? 0 : -1,
