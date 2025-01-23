@@ -1,5 +1,5 @@
 function mxDetect_finger(port, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     ws.onopen = function (evt) {
         var command = "Mx_DetectFinger|" + port + "|" + "";
         ws.send(command);
@@ -17,7 +17,7 @@ function mxDetect_finger(port, call_back_fun) {
     };
 }
 function mxGetDevInfo(port, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     ws.onopen = function (evt) {
         var command = "Mx_GetDeviceInfo|" + port + "|" + "";
         ws.send(command);
@@ -37,7 +37,7 @@ function mxGetDevInfo(port, call_back_fun) {
 }
 
 function mxGetSDKInfor(port, call_back_fun){
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
   ws.onopen = function(evt) {
       var command = "FP_GetSDKVersion|" + port + "|" + "";
 	  ws.send(command);
@@ -57,7 +57,7 @@ function mxGetSDKInfor(port, call_back_fun){
 }
 
 function mxTwoTemplateMatch(featureType, templateA, templateB, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     ws.onopen = function (evt) {
         var command = "Mx_TwoTemplateMatch|" + featureType + "|" + templateA + "|" + templateB; //
         ws.send(command);
@@ -78,7 +78,7 @@ function mxTwoTemplateMatch(featureType, templateA, templateB, call_back_fun) {
 }
 
 function mxFingerMatch(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
   ws.onopen = function(evt) {
       var command = "Mx_FingerMatch|" + nuserid + "|" + ledVal + "|" + algmod + "|" + nfiqvalue + "|" + ntimeout; //
 	  ws.send(command);
@@ -99,7 +99,7 @@ function mxFingerMatch(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, call_
 }
 
 function mxFingerSearch(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     ws.onopen = function (evt) {
         var command = "Mx_FingerSearch|" + nuserid + "|" + ledVal + "|" + algmod + "|" + nfiqvalue + "|" + ntimeout; //
         ws.send(command);
@@ -120,7 +120,7 @@ function mxFingerSearch(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, call
 }
 
 function mxGetTz(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
   ws.onopen = function(evt) {
       //var command = "Mx_GetTzFeatures|" + port + "|" + ledVal + "|" + algmod + "|" + nfiqvalue + "|" + ntimeout + "|" + nuserid + ""; //
       var command = "Mx_GetTzFeatures|" + nuserid + "|" + ledVal + "|" + algmod + "|" + nfiqvalue + "|" + ntimeout; //
@@ -142,7 +142,7 @@ function mxGetTz(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, call_back_f
 }
 
 function mxGetTemplateTest(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     ws.onopen = function (evt) {
         var command = "Mx_GetFeaturesTest|" + nuserid + "|" + ledVal + "|" + algmod + "|" + nfiqvalue + "|" + ntimeout; //
         ws.send(command);
@@ -163,7 +163,7 @@ function mxGetTemplateTest(port, ledVal, algmod, nfiqvalue, ntimeout, nuserid, c
 }
 
 function mxGetMb(port, algmod, ckled, call_back_fun){
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
   ws.onopen = function(evt) {
       var command = "Mx_GetMbTemplate|" + port + "|" + ckled + "|" + algmod;
 	  ws.send(command);
@@ -184,57 +184,32 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
 }
 
 function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+  var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+  ws.onopen = function(evt) {
+      var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
+      console.log(command);
+      
+	  ws.send(command);
+	}
+
+  ws.onmessage = function(evt) {
+    console.log(evt.data);
     
-    ws.onopen = function(evt) {
-        var command = "Mx_GetImage|" + port + "|" + ckled + "|" + imgcompress + "|" + nfiqvalue + "|" + ntimeout;
-        ws.send(command);
-    };
-  
-    ws.onmessage = function(evt) {
-        ws.close();
-        try {
-            // Remove all non-printable and control characters
-            var cleanData = evt.data
-                .replace(/[\0-\x1F\x7F-\x9F]/g, '')  // Broader character removal
-                .trim();  // Remove leading/trailing whitespace
+	  ws.close();
+	  var resp = eval('('+evt.data+')');
+	  call_back_fun(resp.result, resp.data, resp.liveresult, resp.ntime, resp.nfiscore, resp.pscore, resp.imgpress, resp.compresslen);
+    var curPath = getCurrentDirectory();
+  };
 
-            // Check if data is valid JSON
-            var resp;
-            try {
-                resp = JSON.parse(cleanData);
-            } catch (parseError) {
-                // If not JSON, create a fallback response
-                resp = {
-                    result: -1,
-                    data: cleanData
-                };
-            }
-
-            // Call callback with robust fallback values
-            call_back_fun(
-                resp.result || -1, 
-                resp.data || cleanData, 
-                resp.liveresult || null, 
-                resp.ntime || 0, 
-                resp.nfiscore || 0, 
-                resp.pscore || 0, 
-                resp.imgpress || 0, 
-                resp.compresslen || 0
-            );
-        } catch (error) {
-            console.error("Comprehensive error:", error);
-            call_back_fun(-100, "Response processing failed");
-        }
-    };
-  
-    ws.onerror = function (evt) {
-        call_back_fun(-100, "Fingerprint drive error");
-    };
+  ws.onclose = function(evt) {
+  };
+  ws.onerror = function (evt) {
+      call_back_fun(-100, "Fingerprint drive is not installed or not started");
+  };
 }
 
 function mxGetMinutiae(port, call_back_fun) {
-        var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+        var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
         ws.onopen = function (evt) {
             var command = "Mx_GetMinutiae|" + port + "|" + "";
             ws.send(command);
@@ -252,7 +227,7 @@ function mxGetMinutiae(port, call_back_fun) {
     }
 
 function mxRemoveUser(port, nuserid, call_back_fun){
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
   ws.onopen = function(evt) {
 	 
       var command = "FP_RemovUserID|" + port + "|" + nuserid;
@@ -274,7 +249,7 @@ function mxRemoveUser(port, nuserid, call_back_fun){
 }
 
 function mxClearDB(port, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     ws.onopen = function (evt) {
 
         var command = "FP_ClerMemoryDb|" + port;
@@ -296,7 +271,7 @@ function mxClearDB(port, call_back_fun) {
 }
 
 function mxGetDBInfo(port, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     ws.onopen = function (evt) {
 
         var command = "FP_GetDBInfo|" + port;
@@ -318,7 +293,7 @@ function mxGetDBInfo(port, call_back_fun) {
 }
 
 function mxDecompressionImg(port, compresstype, imgpresslen, imgcompress, call_back_fun) {
-    var ws = new WebSocket("wss://203d-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
+    var ws = new WebSocket("wss://86d1-2407-d000-b-154-f537-8c84-5e14-f947.ngrok-free.app/finger");
     ws.onopen = function (evt) {
         var command = "Mx_DecompressionImg|" + port + "|" + compresstype + "|" + imgpresslen + "|" + imgcompress;
         ws.send(command);
