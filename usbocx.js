@@ -196,19 +196,20 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
         try {
             let data = evt.data;
             let resp;
-            
-            try {
-                resp = JSON.parse(data);
-            } catch {
-                let cleanData = JSON.parse(cleanData);
-                resp = JSON.parse(cleanData);
-            }
 
-            if (!resp) {
-                resp = {
-                    result: data.includes('success') ? 0 : -1,
-                    data: data
-                };
+            // Check if data is already an object
+            if (typeof data === 'object') {
+                resp = data;
+            } else {
+                // If it's a string, try parsing or create a default response
+                try {
+                    resp = JSON.parse(data);
+                } catch {
+                    resp = {
+                        result: data.includes('success') ? 0 : -1,
+                        data: data
+                    };
+                }
             }
 
             call_back_fun(
