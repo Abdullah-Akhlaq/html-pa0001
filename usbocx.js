@@ -192,9 +192,7 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
 	  ws.send(command);
 	}
 
-  ws.onmessage = function(evt) {
-    console.log({evt});
-    
+  ws.onmessage = function(evt) {    
 	  ws.close();
 	  var resp = eval('('+evt.data+')');
 	  call_back_fun(resp.result, resp.data, resp.liveresult, resp.ntime, resp.nfiscore, resp.pscore, resp.imgpress, resp.compresslen);
