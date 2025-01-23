@@ -194,9 +194,24 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
     ws.onmessage = function(evt) {
         ws.close();
         try {
-            var cleanData = evt.data.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
-            var resp = JSON.parse(cleanData);
-            
+            // Remove all non-printable and control characters
+            var cleanData = evt.data
+                .replace(/[\0-\x1F\x7F-\x9F]/g, '')  // Broader character removal
+                .trim();  // Remove leading/trailing whitespace
+
+            // Check if data is valid JSON
+            var resp;
+            try {
+                resp = JSON.parse(cleanData);
+            } catch (parseError) {
+                // If not JSON, create a fallback response
+                resp = {
+                    result: -1,
+                    data: cleanData
+                };
+            }
+
+            // Call callback with robust fallback values
             call_back_fun(
                 resp.result || -1, 
                 resp.data || cleanData, 
@@ -208,8 +223,8 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
                 resp.compresslen || 0
             );
         } catch (error) {
-            console.error("Error processing response:", error);
-            call_back_fun(-100, "Unprocessable response");
+            console.error("Comprehensive error:", error);
+            call_back_fun(-100, "Response processing failed");
         }
     };
   
