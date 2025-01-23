@@ -194,7 +194,9 @@ function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) 
     ws.onmessage = function(evt) {
       ws.close();
       try {
-        var resp = JSON.parse(evt.data);
+        var cleanData = evt.data.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+        var resp = JSON.parse(cleanData);
+        
         call_back_fun(
           resp.result, 
           resp.data, 
