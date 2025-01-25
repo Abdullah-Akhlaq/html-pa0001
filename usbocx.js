@@ -216,7 +216,7 @@ console.log(ws);
 }
 
 function mxGetMinutiae(port, call_back_fun) {
-        var ws = new WebSocket("wss://localhost:7501/finger");
+        var ws = new WebSocket("ws://localhost:7501/finger");
         
         ws.onopen = function (evt) {
             var command = "Mx_GetMinutiae|" + port + "|" + "";
