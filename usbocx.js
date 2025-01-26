@@ -184,7 +184,7 @@ function mxGetMb(port, algmod, ckled, call_back_fun){
 }
 
 function mxGetImg(port, ckled, imgcompress, nfiqvalue, ntimeout, call_back_fun) {
-    try {
+    
         var ws = new WebSocket("ws://localhost:7501" + "/finger", []);
 //   ws://localhost:7501/finger
 console.log(ws);
@@ -209,9 +209,6 @@ console.log(ws);
   ws.onerror = function (evt) {
       call_back_fun(-100, "Fingerprint drive is not installed or not started");
   };
-    } catch (error) {
-        console.error("Connection Attempt Failed:", error); 
-    }
   
 }
 
