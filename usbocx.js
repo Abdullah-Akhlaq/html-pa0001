@@ -1,5 +1,5 @@
 function mxDetect_finger(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -20,7 +20,7 @@ function mxDetect_finger(port, call_back_fun) {
   };
 }
 function mxGetDevInfo(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -43,7 +43,7 @@ function mxGetDevInfo(port, call_back_fun) {
 }
 
 function mxGetSDKInfor(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -66,7 +66,7 @@ function mxGetSDKInfor(port, call_back_fun) {
 }
 
 function mxTwoTemplateMatch(featureType, templateA, templateB, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -99,7 +99,7 @@ function mxFingerMatch(
   nuserid,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -147,7 +147,7 @@ function mxFingerSearch(
   nuserid,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -195,7 +195,7 @@ function mxGetTz(
   nuserid,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -244,7 +244,7 @@ function mxGetTemplateTest(
   nuserid,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -284,7 +284,7 @@ function mxGetTemplateTest(
 }
 
 function mxGetMb(port, algmod, ckled, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -315,12 +315,12 @@ function mxGetImg(
   ntimeout,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
   });
-  //   ws://localhost:7501/finger
+  //   wss://localhost:7501/finger
   console.log(ws);
 
   // proxy-server-production-6280.up.railway.app
@@ -364,7 +364,7 @@ function mxGetImg(
 }
 
 function mxGetMinutiae(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -386,7 +386,7 @@ function mxGetMinutiae(port, call_back_fun) {
 }
 
 function mxRemoveUser(port, nuserid, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -410,7 +410,7 @@ function mxRemoveUser(port, nuserid, call_back_fun) {
 }
 
 function mxClearDB(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -434,7 +434,7 @@ function mxClearDB(port, call_back_fun) {
 }
 
 function mxGetDBInfo(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
@@ -464,7 +464,7 @@ function mxDecompressionImg(
   imgcompress,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
+  var ws = new WebSocket("wss://localhost:7501/finger", {
     headers: {
       Origin: "https://html-pa0001.vercel.app",
     },
