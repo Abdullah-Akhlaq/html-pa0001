@@ -441,8 +441,8 @@ function mxDecompressionImg(
 }
 
 function _saveAs(data, name) {
-  const urlObject = window.URL || window.webkitURL || window;
-  const save_link = document.createElementNS(
+  var urlObject = window.URL || window.webkitURL || window;
+  var save_link = document.createElementNS(
     "http://www.w3.org/1999/xhtml",
     "a"
   );
