@@ -315,16 +315,17 @@ function mxGetImg(
   ntimeout,
   call_back_fun
 ) {
-  var ws = new WebSocket("wss://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  const socket = new SockJS('http://localhost:7501/finger');
+  // var ws = new WebSocket("wss://localhost:7501/finger", {
+  //   headers: {
+  //     Origin: "https://html-pa0001.vercel.app",
+  //   },
+  // });
   //   wss://localhost:7501/finger
-  console.log(ws);
+  console.log(socket);
 
   // proxy-server-production-6280.up.railway.app
-  ws.onopen = function (evt) {
+  socket.onopen = function (evt) {
     var command =
       "Mx_GetImage|" +
       port +
@@ -336,13 +337,13 @@ function mxGetImg(
       nfiqvalue +
       "|" +
       ntimeout;
-    ws.send(command);
+    socket.send(command);
   };
 
-  ws.onmessage = function (evt) {
+  socket.onmessage = function (evt) {
     console.log(evt);
 
-    ws.close();
+    socket.close();
     var resp = eval("(" + evt.data + ")");
     call_back_fun(
       resp.result,
@@ -357,8 +358,8 @@ function mxGetImg(
     var curPath = getCurrentDirectory();
   };
 
-  ws.onclose = function (evt) {};
-  ws.onerror = function (evt) {
+  socket.onclose = function (evt) {};
+  socket.onerror = function (evt) {
     call_back_fun(-100, "Fingerprint drive is not installed or not started");
   };
 }
