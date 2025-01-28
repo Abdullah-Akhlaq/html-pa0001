@@ -279,7 +279,7 @@ function mxGetImg(
   ntimeout,
   call_back_fun
 ) {
-  const socket = new SockJS('http://localhost:7501/finger')
+  var socket = new SockJS('http://localhost:7501/finger');
   // var ws = new WebSocket("wss://localhost:7501/finger", {
   //   headers: {
   //     Origin: "https://html-pa0001.vercel.app",
