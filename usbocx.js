@@ -1,9 +1,5 @@
 function mxDetect_finger(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command = "Mx_DetectFinger|" + port + "|" + "";
     ws.send(command);
@@ -20,11 +16,7 @@ function mxDetect_finger(port, call_back_fun) {
   };
 }
 function mxGetDevInfo(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command = "Mx_GetDeviceInfo|" + port + "|" + "";
     ws.send(command);
@@ -43,11 +35,7 @@ function mxGetDevInfo(port, call_back_fun) {
 }
 
 function mxGetSDKInfor(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command = "FP_GetSDKVersion|" + port + "|" + "";
     ws.send(command);
@@ -66,11 +54,7 @@ function mxGetSDKInfor(port, call_back_fun) {
 }
 
 function mxTwoTemplateMatch(featureType, templateA, templateB, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command =
       "Mx_TwoTemplateMatch|" + featureType + "|" + templateA + "|" + templateB; //
@@ -99,11 +83,7 @@ function mxFingerMatch(
   nuserid,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command =
       "Mx_FingerMatch|" +
@@ -147,11 +127,7 @@ function mxFingerSearch(
   nuserid,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command =
       "Mx_FingerSearch|" +
@@ -195,11 +171,7 @@ function mxGetTz(
   nuserid,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     //var command = "Mx_GetTzFeatures|" + port + "|" + ledVal + "|" + algmod + "|" + nfiqvalue + "|" + ntimeout + "|" + nuserid + ""; //
     var command =
@@ -244,11 +216,7 @@ function mxGetTemplateTest(
   nuserid,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command =
       "Mx_GetFeaturesTest|" +
@@ -284,11 +252,7 @@ function mxGetTemplateTest(
 }
 
 function mxGetMb(port, algmod, ckled, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command = "Mx_GetMbTemplate|" + port + "|" + ckled + "|" + algmod;
     ws.send(command);
@@ -315,11 +279,7 @@ function mxGetImg(
   ntimeout,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   //   wss://localhost:7501/finger
   console.log(ws);
 
@@ -364,11 +324,7 @@ function mxGetImg(
 }
 
 function mxGetMinutiae(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
 
   ws.onopen = function (evt) {
     var command = "Mx_GetMinutiae|" + port + "|" + "";
@@ -386,11 +342,7 @@ function mxGetMinutiae(port, call_back_fun) {
 }
 
 function mxRemoveUser(port, nuserid, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command = "FP_RemovUserID|" + port + "|" + nuserid;
     ws.send(command);
@@ -410,11 +362,7 @@ function mxRemoveUser(port, nuserid, call_back_fun) {
 }
 
 function mxClearDB(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command = "FP_ClerMemoryDb|" + port;
     ws.send(command);
@@ -434,11 +382,7 @@ function mxClearDB(port, call_back_fun) {
 }
 
 function mxGetDBInfo(port, call_back_fun) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command = "FP_GetDBInfo|" + port;
     ws.send(command);
@@ -464,11 +408,7 @@ function mxDecompressionImg(
   imgcompress,
   call_back_fun
 ) {
-  var ws = new WebSocket("ws://localhost:7501/finger", {
-    headers: {
-      Origin: "https://html-pa0001.vercel.app",
-    },
-  });
+  var ws = new WebSocket("ws://localhost:7501/finger");
   ws.onopen = function (evt) {
     var command =
       "Mx_DecompressionImg|" +
